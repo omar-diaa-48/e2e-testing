@@ -48,5 +48,79 @@ describe('test the recipes API', () => {
                 })
             )
         })
+
+        it('cant sign in with empty password', async () => {
+            const user = {
+                username: 'admin'
+            }
+
+            const res = await request(app)
+                .post('/login')
+                .send(user)
+
+            expect(res.statusCode).toEqual(400);
+            expect(res.body).toEqual(
+                expect.objectContaining({
+                    success: false,
+                    message: 'username or password can not be empty'
+                })
+            )
+        })
+
+        it('cant sign in with empty username', async () => {
+            const user = {
+                password: 'okay'
+            }
+
+            const res = await request(app)
+                .post('/login')
+                .send(user)
+
+            expect(res.statusCode).toEqual(400);
+            expect(res.body).toEqual(
+                expect.objectContaining({
+                    success: false,
+                    message: 'username or password can not be empty'
+                })
+            )
+        })
+
+        it('cant sign in with non existing username', async () => {
+            const user = {
+                username: 'notexist',
+                password: 'okay'
+            }
+
+            const res = await request(app)
+                .post('/login')
+                .send(user)
+
+            expect(res.statusCode).toEqual(400);
+            expect(res.body).toEqual(
+                expect.objectContaining({
+                    success: false,
+                    message: 'Incorrect username or password'
+                })
+            )
+        })
+
+        it('cant sign in with in correct password', async () => {
+            const user = {
+                username: 'admin',
+                password: 'notokay'
+            }
+
+            const res = await request(app)
+                .post('/login')
+                .send(user)
+
+            expect(res.statusCode).toEqual(400);
+            expect(res.body).toEqual(
+                expect.objectContaining({
+                    success: false,
+                    message: 'Incorrect username or password'
+                })
+            )
+        })
     })
 })
