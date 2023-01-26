@@ -32,8 +32,6 @@ describe('test the recipes API', () => {
                 .post('/login')
                 .send(user)
 
-            console.log({ res });
-
             token = res.body.accessToken;
 
             expect(res.statusCode).toEqual(200);
@@ -119,6 +117,41 @@ describe('test the recipes API', () => {
                 expect.objectContaining({
                     success: false,
                     message: 'Incorrect username or password'
+                })
+            )
+        })
+    })
+
+    describe('POST /recipes', () => {
+
+    })
+
+    describe('GET /recipes', () => {
+        it('should retrieve all the recipes in db', async () => {
+            const res = await request(app)
+                .get('/recipes')
+
+            expect(res.statusCode).toEqual(200);
+            expect(res.body).toEqual(
+                expect.objectContaining({
+                    success: true,
+                    data: expect.any(Object)
+                })
+            )
+        })
+    })
+
+    describe('GET /recipes/:id', () => {
+        it('should not retrieve recipes with any id', async () => {
+            const falseId = '3253212r12r3256234f2'
+            const res = await request(app)
+                .get(`/recipes/${falseId}`)
+
+            expect(res.statusCode).toEqual(400);
+            expect(res.body).toEqual(
+                expect.objectContaining({
+                    success: false,
+                    message: `Recipe with id ${falseId} does not exist`
                 })
             )
         })
