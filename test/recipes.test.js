@@ -3,6 +3,7 @@ const bcrypt = require('bcrypt')
 const app = require('../index')
 const User = require('../database/models/users')
 const mongoose = require('../database/dbConection')
+const UserService = require('../database/services/users')
 
 let id;
 let token;
@@ -119,6 +120,27 @@ describe('test the recipes API', () => {
                     message: 'Incorrect username or password'
                 })
             )
+        })
+
+        it('cant sign in, internal server error', async () => {
+            const user = {
+                username: 'admin',
+                password: 'okay'
+            }
+
+            jest.spyOn(UserService, 'findByUsername')
+                .mockRejectedValueOnce(new Error())
+
+            const res = await request(app)
+                .post('/login')
+                .send(user)
+
+            expect(res.statusCode).toEqual(500);
+            expect(res.body).toEqual(
+                expect.objectContaining({
+                    success: false
+                })
+            );
         })
     })
 
